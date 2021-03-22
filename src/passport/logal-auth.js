@@ -26,7 +26,7 @@ passport.use(
     },
     async (req, email, password, done) => {
       // Validate user
-      const user = User.findOne({ email: email });
+      const user = await User.findOne({ "email": email });
       if (user) {
         return done(
           null,
