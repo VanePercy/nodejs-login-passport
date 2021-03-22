@@ -1,26 +1,39 @@
-const express = require('express');
-const engine = require('ejs-mate');
-const path = require('path');
-const morgan = require('morgan');
+const express = require("express");
+const engine = require("ejs-mate");
+const path = require("path");
+const morgan = require("morgan");
+const passport = require("passport");
+const session = require("express-session");
 
+// Initializations
 const app = express();
-
+require("./database");
+require("./passport/logal-auth");
 
 // Settings
-app.set('views', path.join(__dirname, 'views'));
-app.engine('ejs', engine);
-app.set('view engine', 'ejs');
-app.set('port', process.env.PORT || 3000);
+app.set("views", path.join(__dirname, "views"));
+app.engine("ejs", engine);
+app.set("view engine", "ejs");
+app.set("port", process.env.PORT || 3000);
 
 // Middlewares
-app.use(morgan('dev'));
+app.use(morgan("dev"));
+app.use(express.urlencoded({ extended: false }));
+app.use(
+  session({
+    secret: "myscrectsession",
+    resave: false,
+    saveUninitialized: false,
+  })
+);
+app.use(passport.initialize());
+app.use(passport.session());
 
 // Routes
-app.use('/', require('./routes/index'));
-require('./routes/index');
-
+app.use("/", require("./routes/index"));
+require("./routes/index");
 
 // Starting the server
-app.listen(app.get('port'), () => {
-    console.log('Server on Port', app.get('port'));
+app.listen(app.get("port"), () => {
+  console.log("Server on Port", app.get("port"));
 });

@@ -7,8 +7,14 @@ const userSchema = new Schema({
   password: String,
 });
 
+// Encript password
 userSchema.methods.encryptPassword = (password) => {
-    bcrypt.hashSync(password, bcrypt.genSaltSync(10));
+   return bcrypt.hashSync(password, bcrypt.genSaltSync(10));
 };
 
+// Compare passwords
+userSchema.method.comparePassword = function (password) {
+  return bcrypt.compareSync(password, this.password);
+
+};
 module.exports = mongoose.model("users", userSchema);
