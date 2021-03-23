@@ -26,7 +26,7 @@ passport.use(
     },
     async (req, email, password, done) => {
       // Validate user
-      const user = await User.findOne({ "email": email });
+      const user = await User.findOne({ email: email });
       if (user) {
         return done(
           null,
@@ -40,6 +40,32 @@ passport.use(
         await newUser.save();
         done(null, newUser);
       }
+    }
+  )
+);
+
+
+passport.use(
+  "local-signin",
+  new localStrategy(
+    {
+      usernameField: "email",
+      passwordField: "password",
+      passReqToCallback: true,
+    },
+    async (req, email, password, done) => {
+      const user = User.findOne({ email: email });
+      if (!user) {
+        return done(null, false, req.flash("signinMessage", " No user found."));
+      }
+      if (!user.comparePassword(password)) {
+        return done(
+          null,
+          false,
+          req.flash("siginMessage", "Incorrect Password")
+        );
+      }
+      done(null, user);
     }
   )
 );
