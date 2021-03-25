@@ -15,7 +15,7 @@ passport.deserializeUser(async (id, done) => {
   done(null, user);
 });
 
-// User authentication
+// User register - Signup
 passport.use(
   "local-signup",
   new localStrategy(
@@ -45,6 +45,7 @@ passport.use(
 );
 
 
+// User authentication - Signin
 passport.use(
   "local-signin",
   new localStrategy(
@@ -54,7 +55,7 @@ passport.use(
       passReqToCallback: true,
     },
     async (req, email, password, done) => {
-      const user = User.findOne({ email: email });
+      const user = await User.findOne({ email: email });
       if (!user) {
         return done(null, false, req.flash("signinMessage", " No user found."));
       }
@@ -62,10 +63,10 @@ passport.use(
         return done(
           null,
           false,
-          req.flash("siginMessage", "Incorrect Password")
+          req.flash("signinMessage", "Incorrect Password")
         );
       }
-      done(null, user);
+      return done(null, user);
     }
   )
 );
